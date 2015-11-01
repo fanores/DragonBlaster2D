@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">DragonBlaster2D</string>
+    <string name="main_menu">MainMenu</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="splash_screen_title">-== Dragon Blaster 2D (v1.0) ==-</string>
+    <string name="splash_screen_content_desc">Splash Screen Image</string>
+    <string name="play_button_content_desc">Play Button</string>
+    <string name="exit_button_content_desc">Exit Button</string>
+    <string name="stgs_button_content_desc">Settings Button</string>
+</resources>
