@@ -19,6 +19,9 @@ public class DBGameRenderer implements GLSurfaceView.Renderer {
     private DBBackground cloudsBackg = new DBBackground();
     private DBGoodDragon dragon1 = new DBGoodDragon();
     private int goodDragonFrames = 0;
+    private long loopStart = 0;
+    private long loopEnd = 0;
+    private long loopRunTime = 0;
     private float scrollClouds;
 
     /* Called when the Surface is created.
@@ -45,8 +48,11 @@ public class DBGameRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onDrawFrame(GL10 gl) {
+        loopStart = System.currentTimeMillis();
         try {
-            Thread.sleep(DBEngine.GAME_THREAD_FPS_SLEEP);
+            if (loopRunTime < DBEngine.GAME_THREAD_FPS_SLEEP) {
+                Thread.sleep(DBEngine.GAME_THREAD_FPS_SLEEP - loopRunTime);
+            }
         }
         catch (InterruptedException e) {
             e.printStackTrace();
@@ -57,8 +63,13 @@ public class DBGameRenderer implements GLSurfaceView.Renderer {
         drawGameBackground(gl);
         drawCloudsBackground(gl);
 
+        moveDragon1(gl);
+
         gl.glEnable(GL10.GL_BLEND);
         gl.glBlendFunc(GL10.GL_ONE, GL10.GL_ONE);
+
+        loopEnd = System.currentTimeMillis();
+        loopRunTime = ((loopEnd - loopStart));
     }
 
     /* Called when a first background is being drawn. */
@@ -106,17 +117,58 @@ public class DBGameRenderer implements GLSurfaceView.Renderer {
         // set the cutting edges of the scene
         gl.glOrthof(0f, 1f, 0f, 1f, -1f, 1f);
 
-
     }
 
     /* Used when moving a dragon figure. */
     private void moveDragon1(GL10 gl) {
         switch (DBEngine.dragonFlightAction) {
             case DBEngine.DRAGON_MOVE_UP_1:
+                gl.glMatrixMode(GL10.GL_MODELVIEW);
+                gl.glLoadIdentity();
+                gl.glPushMatrix();
+                gl.glScalef(0.25f, 0.25f, 1f);
 
+                if (DBEngine.dragonMoveY > 0) {
+                    DBEngine.dragonMoveY -= DBEngine.DRAGON_MOVE_SPEED;
+                    gl.glTranslatef(0f, DBEngine.dragonMoveY, 0f);
+                    gl.glMatrixMode(GL10.GL_TEXTURE);
+                    gl.glLoadIdentity();
+                    gl.glTranslatef(0.0f, 0.5f, 0.0f);
+                    goodDragonFrames += 1;
+                } else {
+                    gl.glTranslatef(0.0f, DBEngine.dragonMoveY, 0.0f);
+                    gl.glMatrixMode(GL10.GL_TEXTURE);
+                    gl.glLoadIdentity();
+                    gl.glTranslatef(0.0f, 0.25f, 0f);
+                }
+
+                dragon1.draw(gl);
+                gl.glPopMatrix();
+                gl.glLoadIdentity();
                 break;
             case DBEngine.DRAGON_MOVE_DOWN_4:
+                gl.glMatrixMode(GL10.GL_MODELVIEW);
+                gl.glLoadIdentity();
+                gl.glPushMatrix();
+                gl.glScalef(0.25f, 0.25f, 1f);
 
+                if (DBEngine.dragonMoveY > 3) {
+                    DBEngine.dragonMoveY += DBEngine.DRAGON_MOVE_SPEED;
+                    gl.glTranslatef(0f, DBEngine.dragonMoveY, 0f);
+                    gl.glMatrixMode(GL10.GL_TEXTURE);
+                    gl.glLoadIdentity();
+                    gl.glTranslatef(0.0f, 0.5f, 0.0f);
+                    goodDragonFrames += 1;
+                } else {
+                    gl.glTranslatef(0.0f, DBEngine.dragonMoveY, 0.0f);
+                    gl.glMatrixMode(GL10.GL_TEXTURE);
+                    gl.glLoadIdentity();
+                    gl.glTranslatef(0.0f, 0.25f, 0f);
+                }
+
+                dragon1.draw(gl);
+                gl.glPopMatrix();
+                gl.glLoadIdentity();
                 break;
             case DBEngine.DRAGON_RELEASE_3:
                 gl.glMatrixMode(GL10.GL_MODELVIEW);

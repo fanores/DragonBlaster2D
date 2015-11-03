@@ -8,7 +8,9 @@ package com.andgames.zsm.dragonblaster2d;
 
 /* Imported libraries:  */
 import android.app.Activity;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.view.MotionEvent;
 
 public class DBGame extends Activity {
     /* --- GAME ATTRIBUTES --- */
@@ -30,6 +32,37 @@ public class DBGame extends Activity {
     protected void onPause() {
         super.onPause();
         gameView.onPause();
+    }
+
+    /* Called when user interacts (touches) the screen. */
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        Point size = new Point();
+        float x = event.getX();
+        float y = event.getY();
+
+        DBEngine.display.getSize(size);
+        int height = size.y / 4;
+        int playableArea = size.y - height;
+
+        if (y > playableArea) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    if (y < size.y / 2) {
+                        DBEngine.dragonFlightAction = DBEngine.DRAGON_MOVE_UP_1;
+                    } else {
+                        DBEngine.dragonFlightAction = DBEngine.DRAGON_MOVE_DOWN_4;
+                    }
+                    break;
+                case MotionEvent.ACTION_UP:
+                    DBEngine.dragonFlightAction = DBEngine.DRAGON_RELEASE_3;
+                    break;
+            }
+        }
+
+        //return super.onTouchEvent(event);
+        return false;
     }
 
     /* Called on resuming activity. Activity is about to be used by user. */
