@@ -19,6 +19,10 @@ public class DBGameRenderer implements GLSurfaceView.Renderer {
     private DBBackground cloudsBackg = new DBBackground();
     private DBGoodDragon dragon1 = new DBGoodDragon();
     private int goodDragonFrames = 0;
+    private float textureX = 0.0f;
+    private float textureY = 0.0f;
+    private float textureZ = 0.0f;
+    private int textureIncrement = DBEngine.TEXTURE_INCREMENT_UP;
     private long loopStart = 0;
     private long loopEnd = 0;
     private long loopRunTime = 0;
@@ -103,7 +107,7 @@ public class DBGameRenderer implements GLSurfaceView.Renderer {
         gl.glTranslatef(scrollClouds, 0.0f, 0.0f);
         cloudsBackg.draw(gl);
         gl.glPopMatrix();
-        scrollClouds += DBEngine.SCROLL_CLOUDS;
+        scrollClouds -= DBEngine.SCROLL_CLOUDS; // cloud move from R -> L
         gl.glLoadIdentity();
     }
 
@@ -116,7 +120,6 @@ public class DBGameRenderer implements GLSurfaceView.Renderer {
         gl.glLoadIdentity();
         // set the cutting edges of the scene
         gl.glOrthof(0f, 1f, 0f, 1f, -1f, 1f);
-
     }
 
     /* Used when moving a dragon figure. */
@@ -133,7 +136,7 @@ public class DBGameRenderer implements GLSurfaceView.Renderer {
                     gl.glTranslatef(0f, DBEngine.dragonMoveY, 0f);
                     gl.glMatrixMode(GL10.GL_TEXTURE);
                     gl.glLoadIdentity();
-                    gl.glTranslatef(0.0f, 0.5f, 0.0f);
+                    gl.glTranslatef(0.5f, 0.0f, 0.0f);
                     goodDragonFrames += 1;
                 } else {
                     gl.glTranslatef(0.0f, DBEngine.dragonMoveY, 0.0f);
@@ -152,12 +155,12 @@ public class DBGameRenderer implements GLSurfaceView.Renderer {
                 gl.glPushMatrix();
                 gl.glScalef(0.25f, 0.25f, 1f);
 
-                if (DBEngine.dragonMoveY > 3) {
+                if (DBEngine.dragonMoveY < 3) {
                     DBEngine.dragonMoveY += DBEngine.DRAGON_MOVE_SPEED;
                     gl.glTranslatef(0f, DBEngine.dragonMoveY, 0f);
                     gl.glMatrixMode(GL10.GL_TEXTURE);
                     gl.glLoadIdentity();
-                    gl.glTranslatef(0.0f, 0.5f, 0.0f);
+                    gl.glTranslatef(0.5f, 0.25f, 0.0f);
                     goodDragonFrames += 1;
                 } else {
                     gl.glTranslatef(0.0f, DBEngine.dragonMoveY, 0.0f);
@@ -178,7 +181,9 @@ public class DBGameRenderer implements GLSurfaceView.Renderer {
                 gl.glTranslatef(0f, DBEngine.dragonMoveY, 0f);
                 gl.glMatrixMode(GL10.GL_TEXTURE);
                 gl.glLoadIdentity();
-                gl.glTranslatef(0.0f, 0.0f, 0.0f);
+                //gl.glTranslatef(0.0f, 0.0f, 0.0f);
+                setGoodDragonTextureCoordinates(gl, textureX, textureY, textureZ, goodDragonFrames);
+                gl.glTranslatef(textureX, textureY, textureZ);
                 dragon1.draw(gl);
                 gl.glPopMatrix();
                 gl.glLoadIdentity();
@@ -192,12 +197,48 @@ public class DBGameRenderer implements GLSurfaceView.Renderer {
                 gl.glTranslatef(0f, DBEngine.dragonMoveY, 0f);
                 gl.glMatrixMode(GL10.GL_TEXTURE);
                 gl.glLoadIdentity();
-                gl.glTranslatef(0.0f, 0.0f, 0.0f);
+                //gl.glTranslatef(0.0f, 0.0f, 0.0f);
+                setGoodDragonTextureCoordinates(gl, textureX, textureY, textureZ, goodDragonFrames);
+                gl.glTranslatef(textureX, textureY, textureZ);
                 dragon1.draw(gl);
                 gl.glPopMatrix();
                 gl.glLoadIdentity();
+                goodDragonFrames += 1;
                 break;
         }
 
+    }
+
+    /* Used when moving a dragon figure. */
+    private void setGoodDragonTextureCoordinates (GL10 gl, float x, float y, float z, int dragonFrames ) {
+        // continue only if a dragonFrame change is required!!!
+        if ( dragonFrames >= DBEngine.DRAGON_FRAMES_BETWEEN_ANI) {
+            /* Determine the INCREMENT ACTION. */
+            if ( y == 0.0f ) {
+                textureIncrement = DBEngine.TEXTURE_INCREMENT_UP;
+            } else if ( y == 0.75f) {
+                textureIncrement = DBEngine.TEXTURE_INCREMENT_DOWN;
+            }
+
+            /* Set Y-coordinate based on INCREMENT ACTION. */
+            switch (textureIncrement) {
+                case DBEngine.TEXTURE_INCREMENT_UP:
+                    y += 0.25f;
+                    break;
+                case DBEngine.TEXTURE_INCREMENT_DOWN:
+                    y -= 0.25f;
+                    break;
+                default:
+                    y += 0.25f;
+                    break;
+            }
+
+            goodDragonFrames = 0; // initialize frame countdown variable
+        }
+
+        /* Set X, Y, Z coordinates. */
+        textureX = x; // set new texture X coordinate
+        textureY = y; // set new texture Y coordinate
+        textureZ = z; // set new texture Z coordinate
     }
 }

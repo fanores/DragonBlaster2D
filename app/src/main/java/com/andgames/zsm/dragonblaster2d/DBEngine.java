@@ -29,7 +29,10 @@ public class DBEngine {
     public static final int DRAGON_RELEASE_3 = 3;
     public static final int DRAGON_MOVE_DOWN_4 = 4;
     public static final int DRAGON_FRAMES_BETWEEN_ANI = 9;
-    public static final float DRAGON_MOVE_SPEED = .1f;
+    //public static final float DRAGON_MOVE_SPEED = .1f;
+    public static final float DRAGON_MOVE_SPEED = .05f;
+    public static final int TEXTURE_INCREMENT_UP = 1;
+    public static final int TEXTURE_INCREMENT_DOWN = 0;
     public static final int GAME_THREAD_FPS_SLEEP = (1000/60);
     public static float SCROLL_CLOUDS = .001f;
 

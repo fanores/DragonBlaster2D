@@ -49,7 +49,7 @@ public class DBGame extends Activity {
         if (y > playableArea) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    if (y < size.y / 2) {
+                    if (x < size.x / 2) {
                         DBEngine.dragonFlightAction = DBEngine.DRAGON_MOVE_UP_1;
                     } else {
                         DBEngine.dragonFlightAction = DBEngine.DRAGON_MOVE_DOWN_4;
